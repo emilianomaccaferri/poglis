@@ -1,0 +1,23 @@
+{
+  "name": "poglis",
+  "version": "1.0.0",
+  "description": "a webhook catcher",
+  "main": "build/main.js",
+  "repository": "https://github.com/emilianomaccaferri/poglis",
+  "author": "Emiliano Maccaferri <inbox@emilianomaccaferri.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@altostra/type-validations": "2.6.1-1",
+    "@koa/router": "^12.0.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/koa": "^2.13.5",
+    "@types/koa-bodyparser": "^4.3.7",
+    "@types/koa__router": "^8.0.11",
+    "@types/yaml": "^1.9.7",
+    "fs-extra": "^10.1.0",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "yaml": "^2.1.1"
+  }
+}
