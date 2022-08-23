@@ -1,7 +1,7 @@
 import { enumOf, objectOf, } from "@altostra/type-validations"
 import { string } from "@altostra/type-validations/lib/primitives"
 
-type Methods = 'get' | 'post';
+export type Methods = 'get' | 'post';
 
 export interface HookConfiguration {
     name: string,
