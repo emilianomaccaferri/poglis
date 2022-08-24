@@ -2,7 +2,7 @@
 A minimal and customizable webhook catcher written in TypeScript.
 <br>
 WARNING: THIS SOFTWARE IS UNTESTED (will write tests soon, I promise) AND IN SUPER EARLY ALPHA (I BASICALLY WANTED TO HAVE SOMETHING COOL ON MY GITHUB), USE IT AT YOUR OWN RISK.
-
+SECOND WARNING: I WROTE THIS THING VERY QUICKLY, WILL OPTIMIZE LATER 
 # installation (for now)
 ```
   $ git clone https://github.com/emilianomaccaferri/poglis
