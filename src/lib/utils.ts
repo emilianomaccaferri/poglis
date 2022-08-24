@@ -15,7 +15,7 @@ export const checkEnv = () => {
 export const buildRoute = async(router: Router, method: Methods, path: string, task: Task, middlewares_array?: string[]) => {
 
     const middlewares = (await Promise.all((middlewares_array || []).map(middleware => import(
-        resolve(__dirname, `../middlewares/${middleware}.js`)
+        resolve(__dirname, `../middlewares/${middleware}`)
     )))).map(item => item.default);
 
     middlewares.forEach(middleware => {
