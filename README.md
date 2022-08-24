@@ -49,7 +49,9 @@ The configuration has five fields:
   - `method`: defines the hook's method (required, it can be `get` or `post`);
   - `task`: defines the hook's pipeline. This option has to be a list of shell scripts listed in the hook's directory. Scripts are executed sequentially and in order of appearance inside the config (for now) (required);
   - `middlewares`: defines the hook's middlewares executed BEFORE the task itself. Middlewares are [Koa middlewares](https://koajs.com/) and are listed in the `src/middlewares` directory. Middlewares are defined without their extension (optional).<br>
-Scripts will run in a temporary and separated folder so they won't pollute the project directory.<br><br>
+Scripts will run in a temporary and separated folder so they won't pollute the project directory.<br>
+<u>Remember that scripts need to be executable, obviously!</u>
+<br><br>
 ### example usage
 Let's create a `POST /hello-world` hook defined in the `hooks/hello` directory.
 ```

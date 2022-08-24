@@ -4,20 +4,6 @@ import { createWriteStream, mkdir, mkdirSync, rmdirSync } from "fs";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 import { parentPort, threadId } from "worker_threads";
 import { ExecutorMessage } from "../types/ExecutorMessage";
-import { ExecutorScheduleUnit } from "../types/ExecutorScheduleUnit";
-
-const waitReply = (): Promise<ExecutorScheduleUnit | undefined> => {
-    return new Promise(
-        (res, _) => {
-            parentPort!.postMessage({ type: 'ping' });
-            parentPort!.once('message', (m: ExecutorMessage) => {
-                if(m.type === 'task'){
-                    return res(m.value);
-                }
-            })
-        } 
-    )
-}
 
 const sleep = (seconds: number) => {
     return new Promise(
@@ -63,37 +49,41 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
     
     if(parentPort){
 
-        while(true){
+        parentPort.postMessage({ type: 'ping' }); // ping
+        parentPort.on('message', async(m: ExecutorMessage) => { // pong
             
-            const job = await waitReply();
-            if(!job)
-                await sleep(.5);
-            else{
-               
-                parentPort.postMessage({
-                    type: 'log',
-                    value: `${job.task.name} running`
-                });
+            // this is the "ping pong" poll method
 
-                let env: { [key: string]: any } = {};
-                
-                Object.keys(job.body).forEach(key => {
-                    env[`body_${key}`] = job.body[key];
-                });
-                Object.keys(job.query).forEach(key => {
-                    env[`query_${key}`] = job.query[key];
-                });  
-                Object.keys(job.state).forEach(key => {
-                    env[`state_${key}`] = job.state[key];
-                });             
-                
-                for(const i in job.task.scripts){
-                    const code = await executeJob(job.task.scripts[i], env);
-                    if(code !== 0) throw new Error(`job pipeline for task ${job.task.name} failed with code ${code} on script ${job.task.scripts[i]}`);
+            if(m.type === 'task'){
+                const job = m.value;
+                if(!job)
+                    await sleep(.5);
+                else{
+                    parentPort!.postMessage({
+                        type: 'log',
+                        value: `${job.task.name} running`
+                    });
+    
+                    let env: { [key: string]: any } = {};
+                    
+                    Object.keys(job.body).forEach(key => {
+                        env[`body_${key}`] = job.body[key];
+                    });
+                    Object.keys(job.query).forEach(key => {
+                        env[`query_${key}`] = job.query[key];
+                    });  
+                    Object.keys(job.state).forEach(key => {
+                        env[`state_${key}`] = job.state[key];
+                    });             
+                    
+                    for(const i in job.task.scripts){
+                        const code = await executeJob(job.task.scripts[i], env);
+                        if(code !== 0) throw new Error(`job pipeline for task ${job.task.name} failed with code ${code} on script ${job.task.scripts[i]}`);
+                    } 
                 }
-
+                parentPort!.postMessage({ type: 'ping' }) // ping
             }
 
-        }
+        })
     }
 })();
