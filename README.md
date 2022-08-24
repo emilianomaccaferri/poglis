@@ -10,7 +10,7 @@ WARNING: THIS SOFTWARE IS UNTESTED (will write tests soon, I promise) AND IN SUP
 ```
 # usage
 ## requirements
-  - `node v15` or higher
+  - `node v16.16.0` or higher
   - `TypeScript 4.7.3` or higher
   - this software is currently designed only for *nix OSes and it won't work on Windows 
 ## starting poglis
