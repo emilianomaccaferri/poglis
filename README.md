@@ -79,6 +79,8 @@ export default async(ctx: Context, next: Next) => {
 ... which will be executed before every route which explicits it.
 ## "advanced" features
 Every script has access to a custom set of enviromental variables:
-  - every variable in the body is exposed to the script and accessible via `$body_varname`
-  - every variable in the query is also exposed and is accessible via `$query_varname`
-  - every variable in the request state (Koa's [state](https://koajs.com/)) and is accessible via `$state_varname`
+  - every property in the body is exposed to the script and accessible via `$body_varname`
+  - every property in the query is also exposed and is accessible via `$query_varname`
+  - every property in the request state (Koa's [state](https://koajs.com/)) and is accessible via `$state_varname`
+  
+If, for example, your hook (i.e. a POST request) receives a property named `fagiolo` inside the request body, you can access it in your scripts via `$body_fagiolo`. The same applies for query parameters and state properties, of course.
