@@ -1,5 +1,7 @@
 # poglis
-A minimal and customizable webhook catcher written in TypeScript
+A minimal and customizable webhook catcher written in TypeScript.
+<br>
+WARNING: THIS SOFTWARE IS UNTESTED (will write tests soon, I promise) AND IN SUPER EARLY ALPHA (I BASICALLY WANTED TO HAVE SOMETHING COOL ON MY GITHUB), USE IT AT YOUR OWN RISK.
 
 # installation (for now)
 ```
@@ -7,6 +9,16 @@ A minimal and customizable webhook catcher written in TypeScript
   $ yarn install
 ```
 # usage
+## requirements
+  - `node v15` or higher
+  - `TypeScript 4.7.3` or higher
+  - this software is currently designed only for *nix based OSes and it won't work on Windows 
+## starting poglis
+```
+ $ tsc
+ $ node build/main.js
+```
+
 You can tweak stuff in the `.env` file (basically you can only change the port on which poglis will listen and its workers).<br>
 Example `.env` file:
 ```
@@ -19,6 +31,7 @@ You can configure endpoints in the `hooks` directory. Essentially, a hook is com
   - a config file (`config.yml`)
   - one or more jobs
   - zero or more middlewares
+<br>
 To register a hook you need to create a folder into the `hooks` directory. A hook's configuration resides in its `config.yml` file.<br>
 For example, if you want to create the hook for the `/hello` endpoint you just need to create the `hello` folder in the `hooks` directory and the create a `config.yml` file inside of it.
 ### hooks: `config.yml`
