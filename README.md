@@ -101,3 +101,10 @@ Every script has access to a custom set of enviromental variables:
   - every property in the request state (Koa's [state](https://koajs.com/)) and is accessible via `$state_varname`
   
 If, for example, your hook (i.e. a POST request) receives a property named `fagiolo` inside the request body, you can access it in your scripts via `$body_fagiolo`. The same applies for query parameters and state properties, of course.
+
+# todo
+  - health check
+  - simple control panel
+  - tests
+  - docs
+  - a nice website
