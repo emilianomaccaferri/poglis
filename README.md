@@ -12,7 +12,7 @@ WARNING: THIS SOFTWARE IS UNTESTED (will write tests soon, I promise) AND IN SUP
 ## requirements
   - `node v15` or higher
   - `TypeScript 4.7.3` or higher
-  - this software is currently designed only for *nix based OSes and it won't work on Windows 
+  - this software is currently designed only for *nix OSes and it won't work on Windows 
 ## starting poglis
 ```
  $ tsc
