@@ -7,12 +7,14 @@ export interface HookConfiguration {
     name?: string,
     route?: string, 
     method: Methods,
-    task: string[]
+    task: string[],
+    middlewares?: string[]
 }
 
 export const validConf = objectOf({
     name: maybe(string),
     route: maybe(string),
     method: enumOf<Methods>('get', 'post'),
-    task: arrayOf(string)
+    task: arrayOf(string),
+    middlewares: maybe(arrayOf(string))
 })

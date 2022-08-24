@@ -85,7 +85,10 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
                 });
                 Object.keys(job.query).forEach(key => {
                     env[`query_${key}`] = job.query[key];
-                });               
+                });  
+                Object.keys(job.state).forEach(key => {
+                    env[`state_${key}`] = job.state[key];
+                });             
                 
                 for(const i in job.task.scripts){
                     const code = await executeJob(job.task.scripts[i], env);

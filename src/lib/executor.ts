@@ -65,8 +65,8 @@ export default class Executor {
         throw new Error('no Executor instance initalized')
     }
 
-    public addJob({ task, body, query }: ExecutorScheduleUnit){
-        this.queue.push({ task, body, query });
+    public addJob({ task, body, query, state }: ExecutorScheduleUnit){
+        this.queue.push({ task, body, query, state });
     }
 
 }

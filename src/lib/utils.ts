@@ -1,4 +1,7 @@
 import Router from "@koa/router"
+import { Context } from "koa";
+import { resolve } from "path";
+import Executor from "./executor";
 import { Methods } from "./types/HookConfig"
 import { Task } from "./types/Task";
 
@@ -9,11 +12,19 @@ export const checkEnv = () => {
 
 }
 
-export const buildRoute = (router: Router, method: Methods, path: string, task: Task) => {
+export const buildRoute = async(router: Router, method: Methods, path: string, task: Task, middlewares_array?: string[]) => {
 
-    router.register(path, [method], async ctx => {
+    const middlewares = (await Promise.all((middlewares_array || []).map(middleware => import(
+        resolve(__dirname, `../middlewares/${middleware}.js`)
+    )))).map(item => item.default);
 
-        ctx.app.context.executor.addJob({ task, body: ctx.request.body, query: ctx.request.query });
+    middlewares.forEach(middleware => {
+        router.use(path, middleware);
+    })
+
+    router.register(path, [method], async(ctx: Context) => {
+
+        (ctx.app.context.executor as Executor).addJob({ task, body: ctx.request.body, query: ctx.request.query, state: ctx.state });
         return ctx.body = {
             success: true,
             message: `task ${ task.name } scheduled`
