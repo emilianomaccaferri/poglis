@@ -31,7 +31,7 @@ You can configure endpoints in the `hooks` directory. Essentially, a hook is com
   - a config file (`config.yml`)
   - one or more jobs
   - zero or more middlewares
-<br>
+
 To register a hook you need to create a folder into the `hooks` directory. A hook's configuration resides in its `config.yml` file.<br>
 For example, if you want to create the hook for the `/hello` endpoint you just need to create the `hello` folder in the `hooks` directory and the create a `config.yml` file inside of it.
 ### hooks: `config.yml`
@@ -59,6 +59,7 @@ The `config.yml` file for this hook will be:
 ```
 name: 'hello world hook' # optional
 method: 'post'
+route: '/hello-world' # optional, overwrites default (hello)
 task:
   - test.sh
   - build.sh
