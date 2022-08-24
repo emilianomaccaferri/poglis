@@ -53,6 +53,7 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
         parentPort.on('message', async(m: ExecutorMessage) => { // pong
             
             // this is the "ping pong" poll method
+            // dedicated to https://github.com/dirtybloom 
 
             if(m.type === 'task'){
                 const job = m.value;
