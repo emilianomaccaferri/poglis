@@ -36,10 +36,7 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
             ensureDirSync(cwd);
 
             const p = exec(path, {
-                env: {
-                    ...env,
-                    "HOME": cwd
-                },
+                env,
                 cwd
             });
 
