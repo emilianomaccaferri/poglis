@@ -1,19 +1,22 @@
 import Router from "@koa/router"
-import app from './router'
-import { Methods } from "./types/hook_conf"
+import { Methods } from "./types/HookConfig"
+import { Task } from "./types/Task";
 
-export const buildRoute = (router: Router, method: Methods, path: string, name?: string) => {
+export const checkEnv = () => {
+
+    if(!process.env.PORT) throw new Error('port is not specified');
+    if(!process.env.WORKERS) throw new Error('workers number is not specified');
+
+}
+
+export const buildRoute = (router: Router, method: Methods, path: string, task: Task) => {
 
     router.register(path, [method], async ctx => {
 
-        app.context["counter"]++;
-
-        app.context.executor.addJob({
-            name: `panglerio-${app.context["counter"]}`
-        });
+        ctx.app.context.executor.addJob({ task, body: ctx.request.body, query: ctx.request.query });
         return ctx.body = {
             success: true,
-            message: `task ${name ? `"${name}" `: ''}scheduled`
+            message: `task ${ task.name } scheduled`
         }
 
     });

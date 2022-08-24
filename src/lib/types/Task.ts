@@ -1,3 +1,4 @@
 export interface Task {
-    name: string
+    name: string,
+    scripts: string[]
 }

@@ -1,3 +1,4 @@
 export interface UnitMessage{
-    type: 'ping'
+    type: 'ping' | 'log',
+    value?: string
 }

@@ -1,4 +1,6 @@
 build/*
+hooks/*
+logs/*
 # Logs
 logs
 *.log
