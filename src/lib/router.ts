@@ -19,19 +19,29 @@ app.context["executor"] = Executor.getInstance();
 console.log(`executor registered with ${process.env.WORKERS} workers`);
 
 hooks.forEach(async hook => {
-    
+
     const file = readFileSync(resolve(__dirname, `../../hooks/${hook}/config.yml`), 'binary');
     const parsed_yaml = yaml.parse(file);
-    if(!validConf(parsed_yaml)) throw new Error(`invalid config for hook "${hook}"`);
+    if (!validConf(parsed_yaml)) throw new Error(`invalid config for hook "${hook}"`);
 
     const route = parsed_yaml.route || `/${hook}`;
     const name = parsed_yaml.name || route;
-    console.log(`- registering hook: ${parsed_yaml.method.toUpperCase()} - ${route} ${ parsed_yaml.name ? `(${parsed_yaml.name})` : '' }`)
+    if (parsed_yaml.auth === true && process.env.JWT_KEY === undefined)
+        throw Error(`${name} is an authenticated middleware, but no JWT_KEY was provided`)
 
-    await buildRoute(router, parsed_yaml.method, route, {
-        name,
-        scripts: parsed_yaml.task.map(task => resolve(__dirname, `../../hooks/${hook}/${task}`))
-    }, parsed_yaml.middlewares);
+    console.log(`- registering hook: ${parsed_yaml.method.toUpperCase()} - ${route} ${parsed_yaml.name ? `(${parsed_yaml.name})` : ''}`)
+
+    await buildRoute(router, parsed_yaml.method, route,
+        {
+            name,
+            scripts: parsed_yaml.task.map(task => resolve(__dirname, `../../hooks/${hook}/${task}`))
+        },
+        parsed_yaml.middlewares,
+        {
+            name: `err-${name}`,
+            scripts: [parsed_yaml.error].map(task => resolve(__dirname, `../../hooks/${hook}/${task}`))
+        }
+    );
 
 })
 

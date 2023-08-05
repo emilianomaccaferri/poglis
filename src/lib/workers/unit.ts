@@ -1,8 +1,8 @@
-import { exec } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import { randomBytes } from "crypto";
-import { createWriteStream, mkdir, mkdirSync, rmdirSync } from "fs";
+import { createWriteStream, rmdirSync } from "fs";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
-import { parentPort, threadId } from "worker_threads";
+import { parentPort } from "worker_threads";
 import { ExecutorMessage } from "../types/ExecutorMessage";
 
 const sleep = (seconds: number) => {
@@ -12,7 +12,7 @@ const sleep = (seconds: number) => {
         }
     )
 }
-const executeJob = (path: string, env: { [key: string]: any }) => {
+const executeJob = (path: string, env: { [key: string]: any }, err_task?: string) => {
     return new Promise(
         (resolve, _) => {
             const stdout_stream = createWriteStream(`${path}.stdout.log`);
@@ -21,7 +21,7 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
 
             ensureDirSync(cwd);
 
-            const p = exec(path, {
+            const p = spawn(path, {
                 env,
                 cwd
             });
@@ -36,6 +36,18 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
                 stdout_stream.write(`[poglis] process ended with code: ${code}`);
                 stdout_stream.end();
                 stderr_stream.end();
+                if (err_task) {
+                    if (code !== 0) {
+                        spawnSync(err_task, {
+                            env: {
+                                ...env,
+                                code: code?.toString(),
+                            },
+                            cwd,
+                        });
+                    }
+                }
+
                 emptyDirSync(cwd);
                 rmdirSync(cwd);
                 return resolve(code);
@@ -78,7 +90,7 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
                     });
 
                     for (const i in job.task.scripts) {
-                        const code = await executeJob(job.task.scripts[i], env);
+                        const code = await executeJob(job.task.scripts[i], env, job.onError?.scripts[0]);
                         if (code !== 0) throw new Error(`job pipeline for task ${job.task.name} failed with code ${code} on script ${job.task.scripts[i]}`);
                     }
                 }

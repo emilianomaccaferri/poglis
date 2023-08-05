@@ -12,36 +12,36 @@ export default class Executor {
     private static enabled = false;
     private static instance: Executor;
 
-    private constructor(max_workers: number){
+    private constructor(max_workers: number) {
         this.max_workers = max_workers;
-        for(let i = 0; i < this.max_workers; i++){
+        for (let i = 0; i < this.max_workers; i++) {
             this.workers[i] = new Worker(`${__dirname}/workers/unit.js`, {
-                execArgv: [...process.execArgv, '--unhandled-rejections=strict' ]
+                execArgv: [...process.execArgv, '--unhandled-rejections=strict']
             });
             this.workers[i].on('message', (message: UnitMessage) => {
-                
-                switch(message.type){
+
+                switch (message.type) {
                     case 'ping':
                         this.replyToPing(i);
-                    break;
+                        break;
                     case 'log':
                         this.logger.write(`[worker #${i}] says: ${message.value}\n`)
-                    break;
+                        break;
                 }
 
             });
-            this.workers[i].on('error', e => {                
+            this.workers[i].on('error', e => {
                 this.logger.write(`[worker #${i}] encountered an error: ${e}\n`)
             });
         }
         Executor.enabled = true;
     }
 
-    private replyToPing(index: number){
+    private replyToPing(index: number) {
 
         const task = this.queue.splice(0, 1);
-        
-        if(task.length === 0)
+
+        if (task.length === 0)
             this.workers[index].postMessage({
                 type: 'task',
                 value: null
@@ -53,20 +53,20 @@ export default class Executor {
 
     }
 
-    public static init(max_workers: number){
-        if(Executor.enabled) return;
+    public static init(max_workers: number) {
+        if (Executor.enabled) return;
         Executor.instance = new Executor(max_workers);
     }
 
-    public static getInstance(){
-        if(Executor.enabled)
+    public static getInstance() {
+        if (Executor.enabled)
             return Executor.instance;
 
         throw new Error('no Executor instance initalized')
     }
 
-    public addJob({ task, body, query, state }: ExecutorScheduleUnit){
-        this.queue.push({ task, body, query, state });
+    public addJob({ task, body, query, state, onError }: ExecutorScheduleUnit) {
+        this.queue.push({ task, body, query, state, onError });
     }
 
 }
