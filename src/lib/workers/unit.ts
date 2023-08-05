@@ -18,7 +18,7 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
             const stdout_stream = createWriteStream(`${path}.stdout.log`);
             const stderr_stream = createWriteStream(`${path}.stderr.log`);
             const cwd = `/tmp/poglis/${randomBytes(12).toString('hex')}`;
-            
+
             ensureDirSync(cwd);
 
             const p = exec(path, {
@@ -33,7 +33,7 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
                 stderr_stream.write(data);
             });
             p.on('close', code => {
-                stdout_stream.write(`[poglis] process ended with code: ${ code }`);
+                stdout_stream.write(`[poglis] process ended with code: ${code}`);
                 stdout_stream.end();
                 stderr_stream.end();
                 emptyDirSync(cwd);
@@ -45,42 +45,42 @@ const executeJob = (path: string, env: { [key: string]: any }) => {
     )
 }
 
-(async() => {
-    
-    if(parentPort){
+(async () => {
+
+    if (parentPort) {
 
         parentPort.postMessage({ type: 'ping' }); // ping
-        parentPort.on('message', async(m: ExecutorMessage) => { // pong
-            
+        parentPort.on('message', async (m: ExecutorMessage) => { // pong
+
             // this is the "ping pong" poll method
             // dedicated to https://github.com/dirtybloom 
 
-            if(m.type === 'task'){
+            if (m.type === 'task') {
                 const job = m.value;
-                if(!job)
+                if (!job)
                     await sleep(.5);
-                else{
+                else {
                     parentPort!.postMessage({
                         type: 'log',
                         value: `${job.task.name} running`
                     });
-    
+
                     let env: { [key: string]: any } = {};
-                    
+
                     Object.keys(job.body).forEach(key => {
                         env[`body_${key}`] = job.body[key];
                     });
                     Object.keys(job.query).forEach(key => {
                         env[`query_${key}`] = job.query[key];
-                    });  
+                    });
                     Object.keys(job.state).forEach(key => {
                         env[`state_${key}`] = job.state[key];
-                    });             
-                    
-                    for(const i in job.task.scripts){
+                    });
+
+                    for (const i in job.task.scripts) {
                         const code = await executeJob(job.task.scripts[i], env);
-                        if(code !== 0) throw new Error(`job pipeline for task ${job.task.name} failed with code ${code} on script ${job.task.scripts[i]}`);
-                    } 
+                        if (code !== 0) throw new Error(`job pipeline for task ${job.task.name} failed with code ${code} on script ${job.task.scripts[i]}`);
+                    }
                 }
                 parentPort!.postMessage({ type: 'ping' }) // ping
             }
