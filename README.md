@@ -56,6 +56,8 @@ The configuration has five fields:
 Scripts will run in a temporary and separated folder so they won't pollute the project directory.<br>
 <u>Remember that scripts need to be executable, obviously!</u>
 <br><br>
+### Authenticating hooks
+<todo>
 ### example usage
 Let's create a `POST /hello-world` hook defined in the `hooks/hello` directory.
 ```
