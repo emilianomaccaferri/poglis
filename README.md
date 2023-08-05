@@ -24,7 +24,9 @@ Example `.env` file:
 ```
 PORT=5600
 WORKERS=4
+JWT_KEY=jwtkeyhere # optional
 ```
+Providing the `JWT_KEY` variable enables you to authenticate hooks.
 ## hooks
 You can configure endpoints in the `hooks` directory. Essentially, a hook is composed of:
   - a folder
@@ -40,15 +42,17 @@ The configuration file for a hook is very simple, here's an example:
 # hooks/hello/config.yml
 name: 'hello hook'
 method: 'post'
+auth: true
 task: 
   - script.sh
 ```
 The configuration has five fields:
-  - `name`: defines the hook's name (optional, defaults to the hook's endpoint);
-  - `route`: defines the hook's endpoint, aka the path it can be accessed at (optional, defaults to the hook's folder name);
-  - `method`: defines the hook's method (required, it can be `get` or `post`);
-  - `task`: defines the hook's pipeline. This option has to be a list of shell scripts listed in the hook's directory. Scripts are executed sequentially and in order of appearance inside the config (for now) (required);
-  - `middlewares`: defines the hook's middlewares executed BEFORE the task itself. Middlewares are [Koa middlewares](https://koajs.com/) and are listed in the `src/middlewares` directory. Middlewares are defined without their extension (optional).<br>
+  - `name (string)`: defines the hook's name (optional, defaults to the hook's endpoint);
+  - `route (string)`: defines the hook's endpoint, aka the path it can be accessed at (optional, defaults to the hook's folder name);
+  - `method (string)`: defines the hook's method (required, it can be `get` or `post`);
+  - `task (string[])`: defines the hook's pipeline. This option has to be a list of shell scripts listed in the hook's directory. Scripts are executed sequentially and in order of appearance inside the config (for now) (required);
+  - `middlewares (string[])`: defines the hook's middlewares executed BEFORE the task itself. Middlewares are [Koa middlewares](https://koajs.com/) and are listed in the `src/middlewares` directory. Middlewares are defined without their extension (optional).<br>
+  - `auth (boolean)`: defines if the hook is authenticated or not (optional). If this option is `true`, a signed token must be passed inside the `Authentication` header. <b>NOTE: DON'T PASS `Authentication: Bearer <token>`, just `Authentication: <token>`.
 Scripts will run in a temporary and separated folder so they won't pollute the project directory.<br>
 <u>Remember that scripts need to be executable, obviously!</u>
 <br><br>
